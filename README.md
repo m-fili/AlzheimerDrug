@@ -1,7 +1,7 @@
-# NeuroGuard for Alzheimer's Disease Shiny App
+# Pharmaceutical Drug for Alzheimer's Disease Shiny App
 
 ## Overview
-This Shiny application simulates data collection for a fictional pharmaceutical drug, "NeuroGuard," designed to treat Alzheimer's Disease. It generates sample data for capsule ingredients (Memorin, Galantamine, Vitamin E), applies quality control checks, and provides downloadable results. The app is designed for educational or demonstration purposes, mimicking a real-world pharmaceutical quality assurance process.
+This Shiny application simulates data collection for a  pharmaceutical drug designed to treat Alzheimer's Disease. It generates sample data for capsule ingredients (Memorin, Galantamine, Vitamin E), applies quality control checks, and provides downloadable results. The app is designed for educational or demonstration purposes, mimicking a real-world pharmaceutical quality assurance process.
 
 ## Prerequisites
 - **R**: Version 4.0.0 or higher recommended.
