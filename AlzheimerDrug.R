@@ -1,3 +1,14 @@
+# check if not installed
+required_packages <- c("shiny", "shinythemes", "DT", "jsonlite")
+install_if_missing <- function(packages) {
+  for (pkg in packages) {
+    if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
+      install.packages(pkg, dependencies = TRUE)
+    }
+  }
+}
+
+
 library(shiny)
 library(shinythemes)
 library(DT)
