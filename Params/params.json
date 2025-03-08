@@ -1,0 +1,21 @@
+{
+  "memorin": {
+    "mean": 102,
+    "sd": 2,
+    "min_range": 98,
+    "max_range": 106
+  },
+  "galantamine": {
+    "mean": 50,
+    "sd": 1,
+    "min_range": 48,
+    "max_range": 52
+  },
+  "vitamin_e": {
+    "mean": 25,
+    "sd": 0.7071,
+    "min_range": 23,
+    "max_range": 27
+  },
+  "waiting_time": 1
+}
