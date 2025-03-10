@@ -42,7 +42,7 @@ ui <- fluidPage(
       uiOutput("team_display"),
       numericInput("sample_size", 
                    label = "Enter Sample Size:", 
-                   value = 20, 
+                   value = params$sample_size, 
                    min = 10),
       actionButton("generate", "Generate Sample"),
       actionButton("compute_stats", "Compute Sample Statistics"),
@@ -80,7 +80,6 @@ server <- function(input, output, session) {
   observeEvent(input$submit_team, {
     if (!is.null(input$team_number) && input$team_number >= 1 && input$team_number <= 6) {
       team_num(input$team_number)
-      set.seed(input$team_number)
       removeModal()
     } else {
       showNotification("Please enter a valid team number between 1 and 6.", type = "error")
@@ -106,19 +105,15 @@ server <- function(input, output, session) {
       }
       
       # Generate random values using params
+      set.seed(input$team_number)
       memorin_values <- rnorm(sample_size, mean = params$memorin$mean, sd = params$memorin$sd)
       galantamine_values <- rnorm(sample_size, mean = params$galantamine$mean, sd = params$galantamine$sd)
       vitamin_e_values <- rnorm(sample_size, mean = params$vitamin_e$mean, sd = params$vitamin_e$sd)
       
-      # Apply acceptable ranges from params
-      memorin_values <- pmin(pmax(memorin_values, params$memorin$min_range), params$memorin$max_range)
-      galantamine_values <- pmin(pmax(galantamine_values, params$galantamine$min_range), params$galantamine$max_range)
-      vitamin_e_values <- pmin(pmax(vitamin_e_values, params$vitamin_e$min_range), params$vitamin_e$max_range)
-      
       # Add time element
       collection_time <- Sys.time() + runif(sample_size, -3600, 3600)
       
-      # Create data frame with Pass/Fail column
+      # Create data frame
       data <- data.frame(
         Capsule = 1:sample_size,
         Collection_Time = format(collection_time, "%Y-%m-%d %H:%M:%S"),
@@ -126,21 +121,15 @@ server <- function(input, output, session) {
         Galantamine = round(galantamine_values, 2),
         Vitamin.E = round(vitamin_e_values, 2)
       )
-      data$Status <- ifelse(
-        data$Memorin >= params$memorin$min_range & data$Memorin <= params$memorin$max_range &
-          data$Galantamine >= params$galantamine$min_range & data$Galantamine <= params$galantamine$max_range &
-          data$Vitamin.E >= params$vitamin_e$min_range & data$Vitamin.E <= params$vitamin_e$max_range,
-        "Pass", "Fail"
-      )
     })
     
     data
   })
   
-  # Display the generated sample in a DT table with 20 rows by default
+  # Display the generated sample in a DT table with 100 rows by default
   output$sample_table <- renderDT({
     data <- sampled_data()
-    datatable(data, options = list(pageLength = 20)) %>%
+    datatable(data, options = list(pageLength = 100)) %>%
       formatStyle("Memorin", 
                   backgroundColor = styleInterval(c(params$memorin$min_range, params$memorin$max_range), 
                                                   c("red", "white", "red"))) %>%
@@ -149,9 +138,7 @@ server <- function(input, output, session) {
                                                   c("red", "white", "red"))) %>%
       formatStyle("Vitamin.E", 
                   backgroundColor = styleInterval(c(params$vitamin_e$min_range, params$vitamin_e$max_range), 
-                                                  c("red", "white", "red"))) %>%
-      formatStyle("Status", 
-                  backgroundColor = styleEqual(c("Pass", "Fail"), c("lightgreen", "lightcoral")))
+                                                  c("red", "white", "red")))
   })
   
   # Reactive value to store whether stats should be shown
@@ -167,7 +154,7 @@ server <- function(input, output, session) {
     req(show_stats())
     data <- sampled_data()
     stats <- data.frame(
-      Ingredient = c("Memorin", "Galantamine", "Vitamin E"),
+      Ingredient = c("Memorin", "Galantamine", "Vitamin.E"),
       Mean = round(c(mean(data$Memorin), mean(data$Galantamine), mean(data$Vitamin.E)), 2),
       SD = round(c(sd(data$Memorin), sd(data$Galantamine), sd(data$Vitamin.E)), 2),
       Min = round(c(min(data$Memorin), min(data$Galantamine), min(data$Vitamin.E)), 2),
